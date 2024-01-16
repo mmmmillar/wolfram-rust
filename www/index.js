@@ -1,13 +1,14 @@
 import { Universe } from "wasm-wolfram";
 import { memory } from "wasm-wolfram/wolfram_rust_bg";
 
-const CELL_SIZE = 4;
+const CELL_SIZE = 1;
 const LIVE_RGBA = [244, 43, 3, 255];
+const RGBA_LEN = 4;
 
 const universe = Universe.new(
   window.innerWidth / CELL_SIZE,
   window.innerHeight / CELL_SIZE,
-  105
+  22
 );
 const width = universe.width();
 const height = universe.height();
@@ -17,40 +18,49 @@ canvas.width = width * CELL_SIZE;
 canvas.height = height * CELL_SIZE;
 
 const ctx = canvas.getContext("2d");
+const imageData = ctx.createImageData(canvas.width, canvas.height);
+ctx.putImageData(imageData, 0, 0);
+
+let idx = 0;
 
 const drawCells = () => {
-  const rows = universe.rows();
-  const cells = new Uint8Array(
+  const inputRow = new Uint8Array(
     memory.buffer,
-    universe.cell_ptr(),
-    rows * width
+    universe.last_row_ptr(),
+    width
   );
-  const cellRGB = new Uint8ClampedArray(
-    cells.length * CELL_SIZE * CELL_SIZE * 4
+  const canvasRow = new Uint8ClampedArray(
+    width * CELL_SIZE * CELL_SIZE * RGBA_LEN
   );
 
-  for (let i = 0; i < cells.length; i++) {
-    if (cells[i] === 1) {
-      const row = Math.floor(i / width);
-      const col = i % width;
+  for (let i = 0; i < width; i++) {
+    if (inputRow[i] === 1) {
+      const colIndex = i % width;
 
-      for (let dy = 0; dy < CELL_SIZE; dy++) {
-        for (let dx = 0; dx < CELL_SIZE; dx++) {
-          const baseIndex =
-            ((row * CELL_SIZE + dy) * canvas.width + (col * CELL_SIZE + dx)) *
-            4;
+      for (let d = 0; d < CELL_SIZE * CELL_SIZE; d++) {
+        const dy = Math.floor(d / CELL_SIZE);
+        const dx = d % CELL_SIZE;
 
-          cellRGB[baseIndex] = LIVE_RGBA[0];
-          cellRGB[baseIndex + 1] = LIVE_RGBA[1];
-          cellRGB[baseIndex + 2] = LIVE_RGBA[2];
-          cellRGB[baseIndex + 3] = LIVE_RGBA[3];
-        }
+        const baseIndex =
+          dy * canvas.width + (colIndex * CELL_SIZE + dx) * RGBA_LEN;
+
+        canvasRow.set(LIVE_RGBA, baseIndex);
       }
     }
   }
 
-  let imageData = new ImageData(cellRGB, canvas.width, rows * CELL_SIZE);
-  ctx.putImageData(imageData, 0, 0);
+  if (idx === height) {
+    ctx.globalCompositeOperation = "copy";
+    ctx.drawImage(ctx.canvas, 0, -CELL_SIZE);
+    ctx.globalCompositeOperation = "source-over";
+    idx--;
+  }
+
+  ctx.putImageData(
+    new ImageData(canvasRow, canvas.width, CELL_SIZE),
+    0,
+    CELL_SIZE * idx++
+  );
 };
 
 const renderLoop = () => {
