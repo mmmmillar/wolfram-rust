@@ -6,7 +6,6 @@ const LIVE_RGBA = [
   [244, 43, 3, 255],
   [0, 95, 190, 255],
   [0, 135, 36, 255],
-  [75, 75, 75, 255],
 ];
 const RGBA_LEN = 4;
 
@@ -89,9 +88,22 @@ const drawCells = () => {
   }
 };
 
+const container = document.getElementById("container");
+let scale = 1;
+let inc = 0.0003;
+
+const zoom = () => {
+  scale += inc;
+  container.style.transform = `scale(${scale})`;
+  if (scale > 1.5 || scale < 1) {
+    inc *= -1;
+  }
+};
+
 const renderLoop = () => {
   universe.tick();
   drawCells();
+  zoom();
   requestAnimationFrame(renderLoop);
 };
 

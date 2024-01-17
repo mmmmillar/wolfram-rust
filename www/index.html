@@ -1,8 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>Wolfram Cellular Automata!</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       body {
         margin: 0;
@@ -12,10 +16,99 @@
         align-items: center;
         height: 100vh;
         background-color: #e89005;
+        font-family: "Rubik", sans-serif;
+      }
+
+      #container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform-origin: center center;
+        transition: transform 5s;
+      }
+
+      #overlay {
+        position: absolute;
+        border-radius: 10px;
+        text-align: center;
+        width: 60%;
+        color: white;
+        font-size: 110%;
+      }
+
+      #overlay h1,
+      #overlay p {
+        background-color: rgba(0, 0, 0, 0.1);
+        display: inline;
+        padding: 0;
+        line-height: 1.4em;
+        padding: 0 5px;
+      }
+
+      #overlay div {
+        margin: 30px 0;
+      }
+
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        text-align: center;
+      }
+
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      nav ul li {
+        display: inline-block;
+        margin-right: 20px;
+      }
+
+      nav ul li a {
+        text-decoration: none;
+        color: #222;
+        font-weight: 500;
       }
     </style>
   </head>
   <body>
-    <canvas id="wolfram-canvas"></canvas>
+    <div id="container"><canvas id="wolfram-canvas"></canvas></div>
+    <nav>
+      <ul>
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Wolfram Automata</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </nav>
+
+    <div id="overlay">
+      <div><h1>Hello!</h1></div>
+      <div>
+        <p>
+          I'm [Your Name], a passionate software engineer with a love for
+          crafting innovative solutions. With a background in [mention your
+          relevant expertise or technologies], I thrive on turning ideas into
+          reality through clean and efficient code.
+        </p>
+      </div>
+      <div>
+        <p>
+          Explore my projects, read my thoughts on the latest tech trends, and
+          don't hesitate to reach out if you have questions or collaboration
+          opportunities.
+        </p>
+      </div>
+      <div>
+        <p>
+          Write me:
+          <a href="mailto:your.email@example.com">your.email@example.com</a>
+        </p>
+      </div>
+    </div>
   </body>
 </html>
