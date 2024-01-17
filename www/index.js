@@ -1,7 +1,7 @@
 import { Universe } from "wasm-wolfram";
 import { memory } from "wasm-wolfram/wolfram_rust_bg.wasm";
 
-const CELL_SIZE = 1;
+const CELL_SIZE = 3;
 const LIVE_RGBA = [
   [244, 43, 3, 255],
   [0, 95, 190, 255],
@@ -41,7 +41,10 @@ let current_line_number = 0;
 let total_lines_processed = 0;
 let current_colour = getColour();
 
+let lookup = {};
+
 const drawCells = () => {
+  console.time("drawCells");
   const inputRow = new Uint8Array(
     memory.buffer,
     universe.last_row_ptr(),
@@ -54,16 +57,17 @@ const drawCells = () => {
   for (let i = 0; i < width; i++) {
     if (inputRow[i] === 1) {
       const colIndex = i % width;
+      const colOffset = colIndex * CELL_SIZE * RGBA_LEN;
 
-      for (let d = 0; d < CELL_SIZE * CELL_SIZE; d++) {
-        const dy = Math.floor(d / CELL_SIZE);
-        const dx = d % CELL_SIZE;
-
-        const baseIndex =
-          dy * canvas.width + (colIndex * CELL_SIZE + dx) * RGBA_LEN;
-
-        canvasRow.set(LIVE_RGBA[current_colour], baseIndex);
+      if (lookup[i]) {
+        canvasRow.set(lookup[i], colOffset);
+        continue;
       }
+
+      lookup[i] = Array.from({ length: CELL_SIZE }, () => [
+        ...LIVE_RGBA[current_colour],
+      ]).flat();
+      canvasRow.set(lookup[i], colOffset);
     }
   }
 
@@ -74,18 +78,22 @@ const drawCells = () => {
     current_line_number--;
   }
 
-  ctx.putImageData(
-    new ImageData(canvasRow, canvas.width, CELL_SIZE),
-    0,
-    CELL_SIZE * current_line_number++
-  );
+  for (let i = 0; i < CELL_SIZE; i++) {
+    ctx.putImageData(
+      new ImageData(canvasRow, canvas.width, CELL_SIZE),
+      0,
+      CELL_SIZE * current_line_number + i
+    );
+  }
 
+  current_line_number++;
   total_lines_processed++;
 
   if (total_lines_processed % (height * 2) === 0) {
     current_colour = getColour();
     universe.set_rule(getRule());
   }
+  console.timeEnd("drawCells");
 };
 
 const container = document.getElementById("container");
