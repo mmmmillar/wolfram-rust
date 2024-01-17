@@ -78,6 +78,13 @@ impl Universe {
     pub fn height(&self) -> usize {
         self.depth
     }
+
+    pub fn set_rule(&mut self, rule_number: u32) {
+        self.rule_number = rule_number;
+        let mut last_row = vec![false; self.width];
+        last_row[(self.width / 2) as usize] = true;
+        self.last_row = last_row;
+    }
 }
 
 #[cfg(test)]

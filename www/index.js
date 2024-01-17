@@ -4,11 +4,18 @@ import { memory } from "wasm-wolfram/wolfram_rust_bg.wasm";
 const CELL_SIZE = 1;
 const LIVE_RGBA = [244, 43, 3, 255];
 const RGBA_LEN = 4;
+const rule_set = [
+  30, 54, 60, 62, 90, 94, 102, 110, 122, 126, 150, 158, 182, 188, 220, 250,
+];
+
+const getRule = () => {
+  return rule_set[Math.floor(Math.random() * rule_set.length)];
+};
 
 const universe = Universe.new(
   window.innerWidth / CELL_SIZE,
   window.innerHeight / CELL_SIZE,
-  30
+  getRule()
 );
 const width = universe.width();
 const height = universe.height();
@@ -21,7 +28,8 @@ const ctx = canvas.getContext("2d");
 const imageData = ctx.createImageData(canvas.width, canvas.height);
 ctx.putImageData(imageData, 0, 0);
 
-let idx = 0;
+let current_line_number = 0;
+let total_lines_processed = 0;
 
 const drawCells = () => {
   const inputRow = new Uint8Array(
@@ -49,18 +57,24 @@ const drawCells = () => {
     }
   }
 
-  if (idx === height) {
+  if (current_line_number === height) {
     ctx.globalCompositeOperation = "copy";
     ctx.drawImage(ctx.canvas, 0, -CELL_SIZE);
     ctx.globalCompositeOperation = "source-over";
-    idx--;
+    current_line_number--;
   }
 
   ctx.putImageData(
     new ImageData(canvasRow, canvas.width, CELL_SIZE),
     0,
-    CELL_SIZE * idx++
+    CELL_SIZE * current_line_number++
   );
+
+  total_lines_processed++;
+
+  if (total_lines_processed % (height * 2) === 0) {
+    universe.set_rule(getRule());
+  }
 };
 
 const renderLoop = () => {
