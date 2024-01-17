@@ -16,12 +16,12 @@ pub struct Universe {
     width: usize,
     depth: usize,
     last_row: Vec<bool>,
-    rule: Vec<u32>,
+    rule_number: u32,
 }
 
 #[wasm_bindgen]
 impl Universe {
-    pub fn new(width: usize, depth: usize, rule_number: usize) -> Universe {
+    pub fn new(width: usize, depth: usize, rule_number: u32) -> Universe {
         utils::set_panic_hook();
 
         let mut last_row = vec![false; width];
@@ -31,62 +31,40 @@ impl Universe {
             width,
             depth,
             last_row,
-            rule: Self::set_rule(rule_number),
+            rule_number,
         }
     }
 
-    fn set_rule(rule_num: usize) -> Vec<u32> {
-        let mut rule_num_base_2 = format!("{:b}", rule_num);
-        let num_zeros = 8 - rule_num_base_2.len();
+    fn get_rule_index(&self, index: usize) -> usize {
+        let left_neighbour = if index == 0 {
+            self.width - 1
+        } else {
+            index - 1
+        };
+        let right_neighbour = if index == self.width - 1 {
+            0
+        } else {
+            index + 1
+        };
 
-        if num_zeros > 0 {
-            rule_num_base_2 = "0".repeat(num_zeros) + &rule_num_base_2;
-        }
+        (self.last_row[left_neighbour] as usize) << 2
+            | (self.last_row[index] as usize) << 1
+            | (self.last_row[right_neighbour] as usize)
+    }
 
-        rule_num_base_2
-            .chars()
-            .filter_map(|c| c.to_digit(10))
-            .collect()
+    fn is_cell_set(&self, rule_index: usize) -> bool {
+        self.rule_number & (1 << rule_index) != 0
     }
 
     pub fn tick(&mut self) {
         let mut row = vec![false; self.width];
 
         for i in 0..self.width {
-            let mut neigbourhood = String::with_capacity(3);
-
-            let left_index = if i as i32 - 1 < 0 { i } else { i - 1 };
-            eprintln!("left_index: {:?}", left_index);
-            match self.last_row[left_index] {
-                true => neigbourhood.push('1'),
-                false => neigbourhood.push('0'),
-            };
-
-            eprintln!("i: {:?}", i);
-            match self.last_row[i] {
-                true => neigbourhood.push('1'),
-                false => neigbourhood.push('0'),
-            };
-
-            let right_index = if i + 1 >= self.width { i } else { i + 1 };
-            eprintln!("right_index: {:?}", right_index);
-            match self.last_row[right_index] {
-                true => neigbourhood.push('1'),
-                false => neigbourhood.push('0'),
-            };
-
-            let rule_index = 7 - usize::from_str_radix(&neigbourhood, 2).unwrap();
-            eprintln!(
-                "neighbourhood: {:?}, rule_index: {:?}, result: {:?}",
-                neigbourhood,
-                rule_index,
-                self.rule[rule_index] != 0
-            );
-
-            row[i] = self.rule[rule_index] != 0;
+            let rule_index = self.get_rule_index(i);
+            row[i] = self.is_cell_set(rule_index);
         }
 
-        self.last_row = row
+        self.last_row = row;
     }
 
     pub fn last_row_ptr(&self) -> *const bool {
@@ -100,8 +78,77 @@ impl Universe {
     pub fn height(&self) -> usize {
         self.depth
     }
+}
 
-    pub fn rule_str(&self) -> String {
-        self.rule.iter().map(|c| c.to_string()).collect()
+#[cfg(test)]
+mod tests {
+    use crate::Universe;
+
+    #[test]
+    fn first_row_set_correctly() {
+        let u = Universe::new(11, 5, 90);
+
+        let last_row_ptr = u.last_row_ptr();
+        let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width()) };
+
+        assert_eq!(
+            [false, false, false, false, false, true, false, false, false, false, false],
+            row_slice
+        )
+    }
+
+    #[test]
+    fn second_row_set_correctly() {
+        let mut u = Universe::new(11, 5, 90);
+        u.tick();
+
+        let last_row_ptr = u.last_row_ptr();
+        let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width()) };
+
+        assert_eq!(
+            [false, false, false, false, true, false, true, false, false, false, false],
+            row_slice
+        )
+    }
+
+    #[test]
+    fn third_row_set_correctly() {
+        let mut u = Universe::new(11, 5, 90);
+        u.tick();
+        u.tick();
+
+        let last_row_ptr = u.last_row_ptr();
+        let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width()) };
+
+        assert_eq!(
+            [false, false, false, true, false, false, false, true, false, false, false],
+            row_slice
+        )
+    }
+
+    #[test]
+    fn get_rule_index() {
+        let u = Universe::new(7, 5, 94); // [false, false, false, true, false, false, false]
+
+        assert_eq!(0, u.get_rule_index(0)); // [false, false, false]
+        assert_eq!(0, u.get_rule_index(1)); // [false, false, false]
+        assert_eq!(1, u.get_rule_index(2)); // [false, false, true]
+        assert_eq!(2, u.get_rule_index(3)); // [false, true, false]
+        assert_eq!(4, u.get_rule_index(4)); // [true, false, false]
+        assert_eq!(0, u.get_rule_index(5)); // [false, false, false]
+        assert_eq!(0, u.get_rule_index(6)); // [false, false, false]
+    }
+
+    #[test]
+    fn is_cell_set() {
+        let u = Universe::new(7, 5, 94);
+
+        assert_eq!(false, u.is_cell_set(u.get_rule_index(0)));
+        assert_eq!(false, u.is_cell_set(u.get_rule_index(1)));
+        assert_eq!(true, u.is_cell_set(u.get_rule_index(2)));
+        assert_eq!(true, u.is_cell_set(u.get_rule_index(3)));
+        assert_eq!(true, u.is_cell_set(u.get_rule_index(4)));
+        assert_eq!(false, u.is_cell_set(u.get_rule_index(5)));
+        assert_eq!(false, u.is_cell_set(u.get_rule_index(6)));
     }
 }
