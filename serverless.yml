@@ -1,0 +1,47 @@
+service: wolfram5
+
+plugins:
+  - serverless-s3-sync
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: eu-west-2
+
+custom:
+  s3Sync:
+    - bucketName: ${self:service}
+      localDir: www/dist
+      deleteRemoved: true
+      followSymlinks: true
+      defaultContentType: text/html
+
+resources:
+  Resources:
+    StaticSite:
+      Type: AWS::S3::Bucket
+      Properties:
+        OwnershipControls:
+          Rules:
+            - ObjectOwnership: BucketOwnerPreferred
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          IgnorePublicAcls: false
+          BlockPublicPolicy: false
+          RestrictPublicBuckets: false
+        BucketName: ${self:service}
+        WebsiteConfiguration:
+          IndexDocument: index.html
+    BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref StaticSite
+        PolicyDocument:
+          Statement:
+            - Action:
+                - s3:GetObject
+              Resource:
+                - arn:aws:s3:::${self:service}/*
+                - arn:aws:s3:::${self:service}
+              Effect: Allow
+              Principal: "*"
