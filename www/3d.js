@@ -28,12 +28,22 @@ scene.add(horizon);
 
 const CELL_SIZE = 20;
 const SPACING_FACTOR = 7;
+const rule_set = [
+  30, 54, 60, 62, 90, 94, 102, 110, 122, 126, 150, 158, 182, 188, 220, 250,
+];
+
+const getRule = () => {
+  return rule_set[Math.floor(Math.random() * rule_set.length)];
+};
+
 const universe = Universe.new(
   window.innerWidth / CELL_SIZE / 1.2,
   window.innerHeight / CELL_SIZE / 1.2,
   90
 );
 const width = universe.width();
+const height = universe.height();
+let total_lines_processed = 0;
 
 const drawCells = () => {
   const inputRow = new Uint8Array(
@@ -81,6 +91,12 @@ const drawCells = () => {
         block.position.set(x, y, z);
       }
     }
+  }
+
+  total_lines_processed++;
+
+  if (total_lines_processed % (height * 2) === 0) {
+    universe.set_rule(getRule());
   }
 
   horizon.position.y -= 20;
