@@ -8,7 +8,7 @@ const RGBA_LEN = 4;
 const universe = Universe.new(
   window.innerWidth / CELL_SIZE,
   window.innerHeight / CELL_SIZE,
-  22
+  Math.floor(Math.random() * 255) + 1
 );
 const width = universe.width();
 const height = universe.height();
