@@ -2,14 +2,23 @@ import { Universe } from "wasm-wolfram";
 import { memory } from "wasm-wolfram/wolfram_rust_bg.wasm";
 
 const CELL_SIZE = 1;
-const LIVE_RGBA = [244, 43, 3, 255];
-const RGBA_LEN = 4;
-const rule_set = [
-  30, 54, 60, 62, 90, 94, 102, 110, 122, 126, 150, 158, 182, 188, 220, 250,
+const LIVE_RGBA = [
+  [244, 43, 3, 255],
+  [0, 95, 190, 255],
+  [0, 135, 36, 255],
+  [75, 75, 75, 255],
 ];
+const RGBA_LEN = 4;
 
 const getRule = () => {
+  const rule_set = [
+    30, 54, 60, 62, 90, 94, 102, 110, 122, 126, 150, 158, 182, 188, 220, 250,
+  ];
   return rule_set[Math.floor(Math.random() * rule_set.length)];
+};
+
+const getColour = () => {
+  return Math.floor(Math.random() * LIVE_RGBA.length);
 };
 
 const universe = Universe.new(
@@ -26,10 +35,12 @@ canvas.height = height * CELL_SIZE;
 
 const ctx = canvas.getContext("2d");
 const imageData = ctx.createImageData(canvas.width, canvas.height);
+ctx.imageSmoothingEnabled = false;
 ctx.putImageData(imageData, 0, 0);
 
 let current_line_number = 0;
 let total_lines_processed = 0;
+let current_colour = getColour();
 
 const drawCells = () => {
   const inputRow = new Uint8Array(
@@ -52,7 +63,7 @@ const drawCells = () => {
         const baseIndex =
           dy * canvas.width + (colIndex * CELL_SIZE + dx) * RGBA_LEN;
 
-        canvasRow.set(LIVE_RGBA, baseIndex);
+        canvasRow.set(LIVE_RGBA[current_colour], baseIndex);
       }
     }
   }
@@ -73,6 +84,7 @@ const drawCells = () => {
   total_lines_processed++;
 
   if (total_lines_processed % (height * 2) === 0) {
+    current_colour = getColour();
     universe.set_rule(getRule());
   }
 };
