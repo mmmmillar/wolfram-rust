@@ -1,5 +1,5 @@
 import { Universe } from "wasm-wolfram";
-import { memory } from "wasm-wolfram/wolfram_rust_bg";
+import { memory } from "wasm-wolfram/wolfram_rust_bg.wasm";
 
 const CELL_SIZE = 1;
 const LIVE_RGBA = [244, 43, 3, 255];
@@ -8,7 +8,7 @@ const RGBA_LEN = 4;
 const universe = Universe.new(
   window.innerWidth / CELL_SIZE,
   window.innerHeight / CELL_SIZE,
-  Math.floor(Math.random() * 255) + 1
+  30
 );
 const width = universe.width();
 const height = universe.height();
