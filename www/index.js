@@ -1,13 +1,12 @@
 import { Universe } from "wasm-wolfram";
 import { memory } from "wasm-wolfram/wolfram_rust_bg.wasm";
 
-const CELL_SIZE = 3;
-const LIVE_RGBA = [
-  [244, 43, 3, 255],
-  [0, 95, 190, 255],
-  [0, 135, 36, 255],
+const CELL_SIZE = 1;
+const LIVE_RGB = [
+  [244, 43, 3],
+  [0, 95, 190],
+  [0, 135, 36],
 ];
-const RGBA_LEN = 4;
 
 const getRule = () => {
   const rule_set = [
@@ -17,7 +16,7 @@ const getRule = () => {
 };
 
 const getColour = () => {
-  return Math.floor(Math.random() * LIVE_RGBA.length);
+  return LIVE_RGB[Math.floor(Math.random() * LIVE_RGB.length)];
 };
 
 const universe = Universe.new(
@@ -41,35 +40,17 @@ let current_line_number = 0;
 let total_lines_processed = 0;
 let current_colour = getColour();
 
-let lookup = {};
-
 const drawCells = () => {
-  console.time("drawCells");
-  const inputRow = new Uint8Array(
-    memory.buffer,
-    universe.last_row_ptr(),
-    width
+  const row_ptr = universe.get_row(
+    CELL_SIZE,
+    current_colour[0],
+    current_colour[1],
+    current_colour[2]
   );
+
   const canvasRow = new Uint8ClampedArray(
-    width * CELL_SIZE * CELL_SIZE * RGBA_LEN
+    new Uint8Array(memory.buffer, row_ptr, width * CELL_SIZE * CELL_SIZE * 4)
   );
-
-  for (let i = 0; i < width; i++) {
-    if (inputRow[i] === 1) {
-      const colIndex = i % width;
-      const colOffset = colIndex * CELL_SIZE * RGBA_LEN;
-
-      if (lookup[i]) {
-        canvasRow.set(lookup[i], colOffset);
-        continue;
-      }
-
-      lookup[i] = Array.from({ length: CELL_SIZE }, () => [
-        ...LIVE_RGBA[current_colour],
-      ]).flat();
-      canvasRow.set(lookup[i], colOffset);
-    }
-  }
 
   if (current_line_number === height) {
     ctx.globalCompositeOperation = "copy";
@@ -78,13 +59,11 @@ const drawCells = () => {
     current_line_number--;
   }
 
-  for (let i = 0; i < CELL_SIZE; i++) {
-    ctx.putImageData(
-      new ImageData(canvasRow, canvas.width, CELL_SIZE),
-      0,
-      CELL_SIZE * current_line_number + i
-    );
-  }
+  ctx.putImageData(
+    new ImageData(canvasRow, canvas.width, CELL_SIZE),
+    0,
+    CELL_SIZE * current_line_number
+  );
 
   current_line_number++;
   total_lines_processed++;
@@ -93,7 +72,6 @@ const drawCells = () => {
     current_colour = getColour();
     universe.set_rule(getRule());
   }
-  console.timeEnd("drawCells");
 };
 
 const container = document.getElementById("container");

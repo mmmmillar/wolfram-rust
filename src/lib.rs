@@ -85,6 +85,31 @@ impl Universe {
         last_row[(self.width / 2) as usize] = true;
         self.last_row = last_row;
     }
+
+    pub fn get_row(&mut self, cell_size: usize, r: u8, g: u8, b: u8) -> *const u8 {
+        let mut row = vec![0; self.width * cell_size * cell_size * 4];
+
+        for i in 0..self.width {
+            if self.last_row[i] {
+                let col_index = i % self.width;
+
+                for d in 0..(cell_size * cell_size) {
+                    let dy = d / cell_size;
+                    let dx = d % cell_size;
+
+                    let base_index =
+                        dy * (self.width * cell_size) + (col_index * cell_size + dx) * 4;
+
+                    row[base_index] = r;
+                    row[base_index + 1] = g;
+                    row[base_index + 2] = b;
+                    row[base_index + 3] = 255;
+                }
+            }
+        }
+
+        row.as_slice().as_ptr()
+    }
 }
 
 #[cfg(test)]
