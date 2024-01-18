@@ -68,19 +68,10 @@ const zoom = () => {
   }
 };
 
-const animationSwitch = document.getElementById("doAnimate");
-let doAnimate = false;
-
-animationSwitch.addEventListener("change", function () {
-  doAnimate = animationSwitch.checked;
-});
-
 const renderLoop = () => {
-  if (doAnimate) {
-    universe.tick();
-    drawCells();
-    zoom();
-  }
+  universe.tick();
+  drawCells();
+  zoom();
   requestAnimationFrame(renderLoop);
 };
 
