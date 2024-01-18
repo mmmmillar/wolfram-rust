@@ -14,13 +14,15 @@ macro_rules! log {
 #[wasm_bindgen]
 pub struct Universe {
     width: usize,
+    height: usize,
     last_row: Vec<bool>,
     rule_number: u32,
+    grid: Vec<bool>,
 }
 
 #[wasm_bindgen]
 impl Universe {
-    pub fn new(width: usize, rule_number: u32) -> Universe {
+    pub fn new(width: usize, height: usize, rule_number: u32) -> Universe {
         utils::set_panic_hook();
 
         let mut last_row = vec![false; width];
@@ -28,8 +30,10 @@ impl Universe {
 
         Universe {
             width,
+            height,
             last_row,
             rule_number,
+            grid: Vec::new(),
         }
     }
 
@@ -69,6 +73,28 @@ impl Universe {
         self.last_row.as_slice().as_ptr()
     }
 
+    pub fn generate_grid(&mut self) {
+        let mut rows = vec![false; self.width * self.height * 2];
+
+        for j in 0..self.height * 2 {
+            let mut row = vec![false; self.width];
+            for i in 0..self.width {
+                let rule_index = self.get_rule_index(i);
+                row[i] = self.is_cell_set(rule_index);
+                rows[i + (j * self.width)] = row[i];
+            }
+            self.last_row = row;
+        }
+
+        self.grid = rows;
+    }
+
+    pub fn grid_ptr(&self) -> *const bool {
+        let max_start = self.width * self.height;
+        let i = (js_sys::Math::random() * max_start as f64) as usize;
+        self.grid[i..max_start + i].as_ptr()
+    }
+
     pub fn set_rule(&mut self, rule_number: u32) {
         self.rule_number = rule_number;
         let mut last_row = vec![false; self.width];
@@ -83,7 +109,7 @@ mod tests {
 
     #[test]
     fn first_row_set_correctly() {
-        let u = Universe::new(11, 90);
+        let u = Universe::new(11, 3, 90);
 
         let last_row_ptr = u.last_row_ptr();
         let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width) };
@@ -96,7 +122,7 @@ mod tests {
 
     #[test]
     fn second_row_set_correctly() {
-        let mut u = Universe::new(11, 90);
+        let mut u = Universe::new(11, 3, 90);
         u.tick();
 
         let last_row_ptr = u.last_row_ptr();
@@ -110,7 +136,7 @@ mod tests {
 
     #[test]
     fn third_row_set_correctly() {
-        let mut u = Universe::new(11, 90);
+        let mut u = Universe::new(11, 3, 90);
         u.tick();
         u.tick();
 
@@ -125,7 +151,7 @@ mod tests {
 
     #[test]
     fn get_rule_index() {
-        let u = Universe::new(7, 94); // [false, false, false, true, false, false, false]
+        let u = Universe::new(7, 3, 94); // [false, false, false, true, false, false, false]
 
         assert_eq!(0, u.get_rule_index(0)); // [false, false, false]
         assert_eq!(0, u.get_rule_index(1)); // [false, false, false]
@@ -138,7 +164,7 @@ mod tests {
 
     #[test]
     fn is_cell_set() {
-        let u = Universe::new(7, 94);
+        let u = Universe::new(7, 3, 94);
 
         assert_eq!(false, u.is_cell_set(u.get_rule_index(0)));
         assert_eq!(false, u.is_cell_set(u.get_rule_index(1)));

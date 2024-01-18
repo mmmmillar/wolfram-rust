@@ -28,9 +28,7 @@ scene.add(horizon);
 
 const CELL_SIZE = 20;
 const SPACING_FACTOR = 7;
-const rule_set = [
-  30, 54, 60, 62, 90, 94, 102, 110, 122, 126, 150, 158, 182, 188, 220, 250,
-];
+const rule_set = [60, 90, 102, 110, 126, 150, 182, 188, 220];
 
 const getRule = () => {
   return rule_set[Math.floor(Math.random() * rule_set.length)];
