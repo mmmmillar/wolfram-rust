@@ -14,15 +14,13 @@ macro_rules! log {
 #[wasm_bindgen]
 pub struct Universe {
     width: usize,
-    depth: usize,
     last_row: Vec<bool>,
     rule_number: u32,
-    next_rows: Vec<bool>,
 }
 
 #[wasm_bindgen]
 impl Universe {
-    pub fn new(width: usize, depth: usize, rule_number: u32) -> Universe {
+    pub fn new(width: usize, rule_number: u32) -> Universe {
         utils::set_panic_hook();
 
         let mut last_row = vec![false; width];
@@ -30,10 +28,8 @@ impl Universe {
 
         Universe {
             width,
-            depth,
             last_row,
             rule_number,
-            next_rows: Vec::new(),
         }
     }
 
@@ -58,24 +54,15 @@ impl Universe {
         self.rule_number & (1 << rule_index) != 0
     }
 
-    pub fn tick(&mut self, num_rows: usize) {
-        let mut rows = vec![false; self.width * num_rows];
+    pub fn tick(&mut self) {
+        let mut row = vec![false; self.width];
 
-        for j in 0..num_rows {
-            let mut row = vec![false; self.width];
-            for i in 0..self.width {
-                let rule_index = self.get_rule_index(i);
-                row[i] = self.is_cell_set(rule_index);
-                rows[i + (j * self.width)] = row[i];
-            }
-            self.last_row = row;
+        for i in 0..self.width {
+            let rule_index = self.get_rule_index(i);
+            row[i] = self.is_cell_set(rule_index);
         }
 
-        self.next_rows = rows;
-    }
-
-    pub fn next_rows_ptr(&self) -> *const bool {
-        self.next_rows.as_slice().as_ptr()
+        self.last_row = row;
     }
 
     pub fn last_row_ptr(&self) -> *const bool {
@@ -96,7 +83,7 @@ mod tests {
 
     #[test]
     fn first_row_set_correctly() {
-        let u = Universe::new(11, 5, 90);
+        let u = Universe::new(11, 90);
 
         let last_row_ptr = u.last_row_ptr();
         let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width) };
@@ -109,8 +96,8 @@ mod tests {
 
     #[test]
     fn second_row_set_correctly() {
-        let mut u = Universe::new(11, 5, 90);
-        u.tick(1);
+        let mut u = Universe::new(11, 90);
+        u.tick();
 
         let last_row_ptr = u.last_row_ptr();
         let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width) };
@@ -123,9 +110,9 @@ mod tests {
 
     #[test]
     fn third_row_set_correctly() {
-        let mut u = Universe::new(11, 5, 90);
-        u.tick(1);
-        u.tick(1);
+        let mut u = Universe::new(11, 90);
+        u.tick();
+        u.tick();
 
         let last_row_ptr = u.last_row_ptr();
         let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width) };
@@ -138,7 +125,7 @@ mod tests {
 
     #[test]
     fn get_rule_index() {
-        let u = Universe::new(7, 5, 94); // [false, false, false, true, false, false, false]
+        let u = Universe::new(7, 94); // [false, false, false, true, false, false, false]
 
         assert_eq!(0, u.get_rule_index(0)); // [false, false, false]
         assert_eq!(0, u.get_rule_index(1)); // [false, false, false]
@@ -151,7 +138,7 @@ mod tests {
 
     #[test]
     fn is_cell_set() {
-        let u = Universe::new(7, 5, 94);
+        let u = Universe::new(7, 94);
 
         assert_eq!(false, u.is_cell_set(u.get_rule_index(0)));
         assert_eq!(false, u.is_cell_set(u.get_rule_index(1)));

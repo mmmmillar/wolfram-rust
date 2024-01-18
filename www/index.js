@@ -1,7 +1,6 @@
 import { Universe } from "wasm-wolfram";
 import { memory } from "wasm-wolfram/wolfram_rust_bg.wasm";
 
-const ROWS_PER_FRAME = 2;
 const LIVE_RGB = [
   [244, 43, 3],
   [0, 95, 190],
@@ -18,10 +17,10 @@ const getRule = () => {
 const w = window.innerWidth;
 const h = window.innerHeight;
 
-const universe = Universe.new(w, h, getRule());
+const universe = Universe.new(w, getRule());
+
 const canvas = document.getElementById("wolfram-canvas");
 const ctx = canvas.getContext("2d");
-
 canvas.width = w;
 canvas.height = h;
 ctx.imageSmoothingEnabled = false;
@@ -31,37 +30,28 @@ const changeColour = () => {
   ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
 };
 
-let total_lines_processed = 0;
 let current_line_number = 0;
+let total_lines_processed = 0;
 
 const drawCells = () => {
-  if (current_line_number >= h) {
+  if (current_line_number === h) {
     ctx.globalCompositeOperation = "copy";
-    ctx.drawImage(ctx.canvas, 0, -ROWS_PER_FRAME);
+    ctx.drawImage(ctx.canvas, 0, -1);
     ctx.globalCompositeOperation = "source-over";
-    current_line_number -= ROWS_PER_FRAME;
+    current_line_number--;
   }
 
-  const rows = new Uint8Array(
-    memory.buffer,
-    universe.next_rows_ptr(),
-    w * ROWS_PER_FRAME
-  );
+  const row = new Uint8Array(memory.buffer, universe.last_row_ptr(), w);
 
-  for (let y = 0; y < ROWS_PER_FRAME; y++) {
-    const row = rows.slice(y * w, y * w + w);
-
-    for (let x = 0; x < w; x++) {
-      if (row[x] === 1) {
-        ctx.fillRect(x, y + current_line_number, 1, 1);
-      }
+  for (let x = 0; x < w; x++) {
+    if (row[x] === 1) {
+      ctx.fillRect(x, current_line_number, 1, 1);
     }
   }
 
-  current_line_number += ROWS_PER_FRAME;
-  total_lines_processed += ROWS_PER_FRAME;
+  current_line_number++;
 
-  if (total_lines_processed % (h * 2) < ROWS_PER_FRAME) {
+  if (++total_lines_processed % (h * 2) === 0) {
     changeColour();
     universe.set_rule(getRule());
   }
@@ -80,12 +70,10 @@ const zoom = () => {
 };
 
 const renderLoop = () => {
-  universe.tick(ROWS_PER_FRAME);
+  universe.tick();
   drawCells();
   zoom();
-  setTimeout(() => {
-    requestAnimationFrame(renderLoop);
-  }, 30);
+  requestAnimationFrame(renderLoop);
 };
 
 changeColour();
