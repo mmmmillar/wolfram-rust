@@ -8,9 +8,7 @@ const LIVE_RGB = [
 ];
 
 const getRule = () => {
-  const rule_set = [
-    30, 54, 60, 62, 90, 94, 102, 110, 122, 126, 150, 158, 182, 188, 220, 250,
-  ];
+  const rule_set = [30, 54, 60, 62, 90, 102, 110, 126, 150, 158, 182, 188, 220];
   return rule_set[Math.floor(Math.random() * rule_set.length)];
 };
 
@@ -69,10 +67,19 @@ const zoom = () => {
   }
 };
 
+const animationSwitch = document.getElementById("doAnimate");
+let doAnimate = false;
+
+animationSwitch.addEventListener("change", function () {
+  doAnimate = animationSwitch.checked;
+});
+
 const renderLoop = () => {
-  universe.tick();
-  drawCells();
-  zoom();
+  if (doAnimate) {
+    universe.tick();
+    drawCells();
+    zoom();
+  }
   requestAnimationFrame(renderLoop);
 };
 
