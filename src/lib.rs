@@ -71,44 +71,11 @@ impl Universe {
         self.last_row.as_slice().as_ptr()
     }
 
-    pub fn width(&self) -> usize {
-        self.width
-    }
-
-    pub fn height(&self) -> usize {
-        self.depth
-    }
-
     pub fn set_rule(&mut self, rule_number: u32) {
         self.rule_number = rule_number;
         let mut last_row = vec![false; self.width];
         last_row[(self.width / 2) as usize] = true;
         self.last_row = last_row;
-    }
-
-    pub fn get_row(&mut self, cell_size: usize, r: u8, g: u8, b: u8) -> *const u8 {
-        let mut row = vec![0; self.width * cell_size * cell_size * 4];
-
-        for i in 0..self.width {
-            if self.last_row[i] {
-                let col_index = i % self.width;
-
-                for d in 0..(cell_size * cell_size) {
-                    let dy = d / cell_size;
-                    let dx = d % cell_size;
-
-                    let base_index =
-                        dy * (self.width * cell_size) + (col_index * cell_size + dx) * 4;
-
-                    row[base_index] = r;
-                    row[base_index + 1] = g;
-                    row[base_index + 2] = b;
-                    row[base_index + 3] = 255;
-                }
-            }
-        }
-
-        row.as_slice().as_ptr()
     }
 }
 
@@ -121,7 +88,7 @@ mod tests {
         let u = Universe::new(11, 5, 90);
 
         let last_row_ptr = u.last_row_ptr();
-        let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width()) };
+        let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width) };
 
         assert_eq!(
             [false, false, false, false, false, true, false, false, false, false, false],
@@ -135,7 +102,7 @@ mod tests {
         u.tick();
 
         let last_row_ptr = u.last_row_ptr();
-        let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width()) };
+        let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width) };
 
         assert_eq!(
             [false, false, false, false, true, false, true, false, false, false, false],
@@ -150,7 +117,7 @@ mod tests {
         u.tick();
 
         let last_row_ptr = u.last_row_ptr();
-        let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width()) };
+        let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width) };
 
         assert_eq!(
             [false, false, false, true, false, false, false, true, false, false, false],

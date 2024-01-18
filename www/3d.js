@@ -36,38 +36,29 @@ const getRule = () => {
   return rule_set[Math.floor(Math.random() * rule_set.length)];
 };
 
-const universe = Universe.new(
-  window.innerWidth / CELL_SIZE / 1.2,
-  window.innerHeight / CELL_SIZE / 1.2,
-  90
-);
-const width = universe.width();
-const height = universe.height();
+const w = window.innerWidth / CELL_SIZE / 1.2;
+const h = window.innerHeight / CELL_SIZE / 1.2;
+
+const universe = Universe.new(w, h, 90);
 let total_lines_processed = 0;
 
 const drawCells = () => {
-  const inputRow = new Uint8Array(
-    memory.buffer,
-    universe.last_row_ptr(),
-    width
-  );
-
-  const numRows = universe.height();
+  const inputRow = new Uint8Array(memory.buffer, universe.last_row_ptr(), w);
 
   scene.children.forEach((child) => {
     if (child instanceof THREE.Mesh && child.name !== "horizon") {
       const cellCol = Math.round(
-        (child.position.x + (width * CELL_SIZE) / 2) / CELL_SIZE
+        (child.position.x + (w * CELL_SIZE) / 2) / CELL_SIZE
       );
       if (inputRow[cellCol] !== 1) scene.remove(child);
     }
   });
 
-  for (let row = 0; row < numRows; row++) {
-    for (let col = 0; col < width; col++) {
+  for (let row = 0; row < h; row++) {
+    for (let col = 0; col < w; col++) {
       if (inputRow[col] === 1) {
-        const x = (col - width / 2) * CELL_SIZE * SPACING_FACTOR;
-        const y = (numRows / 2 - row) * CELL_SIZE * SPACING_FACTOR;
+        const x = (col - w / 2) * CELL_SIZE * SPACING_FACTOR;
+        const y = (h / 2 - row) * CELL_SIZE * SPACING_FACTOR;
         const z = 0;
 
         let block = scene.getObjectByName(`${col}_${row}`);
@@ -95,7 +86,7 @@ const drawCells = () => {
 
   total_lines_processed++;
 
-  if (total_lines_processed % (height * 2) === 0) {
+  if (total_lines_processed % (h * 2) === 0) {
     universe.set_rule(getRule());
   }
 
