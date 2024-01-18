@@ -94,7 +94,7 @@ const drawCells = () => {
 };
 
 const renderLoop = () => {
-  universe.tick();
+  universe.tick(1);
   drawCells();
   renderer.render(scene, camera);
 

@@ -17,6 +17,7 @@ pub struct Universe {
     depth: usize,
     last_row: Vec<bool>,
     rule_number: u32,
+    next_rows: Vec<bool>,
 }
 
 #[wasm_bindgen]
@@ -32,6 +33,7 @@ impl Universe {
             depth,
             last_row,
             rule_number,
+            next_rows: Vec::new(),
         }
     }
 
@@ -56,15 +58,24 @@ impl Universe {
         self.rule_number & (1 << rule_index) != 0
     }
 
-    pub fn tick(&mut self) {
-        let mut row = vec![false; self.width];
+    pub fn tick(&mut self, num_rows: usize) {
+        let mut rows = vec![false; self.width * num_rows];
 
-        for i in 0..self.width {
-            let rule_index = self.get_rule_index(i);
-            row[i] = self.is_cell_set(rule_index);
+        for j in 0..num_rows {
+            let mut row = vec![false; self.width];
+            for i in 0..self.width {
+                let rule_index = self.get_rule_index(i);
+                row[i] = self.is_cell_set(rule_index);
+                rows[i + (j * self.width)] = row[i];
+            }
+            self.last_row = row;
         }
 
-        self.last_row = row;
+        self.next_rows = rows;
+    }
+
+    pub fn next_rows_ptr(&self) -> *const bool {
+        self.next_rows.as_slice().as_ptr()
     }
 
     pub fn last_row_ptr(&self) -> *const bool {
@@ -99,7 +110,7 @@ mod tests {
     #[test]
     fn second_row_set_correctly() {
         let mut u = Universe::new(11, 5, 90);
-        u.tick();
+        u.tick(1);
 
         let last_row_ptr = u.last_row_ptr();
         let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width) };
@@ -113,8 +124,8 @@ mod tests {
     #[test]
     fn third_row_set_correctly() {
         let mut u = Universe::new(11, 5, 90);
-        u.tick();
-        u.tick();
+        u.tick(1);
+        u.tick(1);
 
         let last_row_ptr = u.last_row_ptr();
         let row_slice = unsafe { std::slice::from_raw_parts(last_row_ptr, u.width) };
