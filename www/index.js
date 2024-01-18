@@ -1,5 +1,6 @@
 import { Universe } from "wasm-wolfram";
 import { memory } from "wasm-wolfram/wolfram_rust_bg.wasm";
+import "./styles.css";
 
 const LIVE_RGB = [
   [244, 43, 3],
