@@ -7,7 +7,6 @@ module.exports = {
   },
   entry: {
     index: "./index.js",
-    scroll: "./scroll.js",
     "3d": "./3d.js",
   },
   output: {
@@ -20,11 +19,6 @@ module.exports = {
       template: "./index.html",
       filename: "index.html",
       chunks: ["index"],
-    }),
-    new HtmlWebpackPlugin({
-      template: "./scroll.html",
-      filename: "scroll.html",
-      chunks: ["scroll"],
     }),
     new HtmlWebpackPlugin({
       template: "./3d.html",

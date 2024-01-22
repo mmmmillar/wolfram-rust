@@ -15,33 +15,6 @@ body {
   left: 0;
   transform-origin: center center;
   transition: transform 5s;
-  opacity: 100;
-}
-
-.fadeIn {
-  animation: fadeIn 1200ms linear 1 forwards;
-}
-
-.fadeOut {
-  animation: fadeOut 1000ms linear 1 backwards;
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 100;
-  }
-}
-
-@keyframes fadeOut {
-  0% {
-    opacity: 100;
-  }
-  100% {
-    opacity: 0;
-  }
 }
 
 #overlay {
