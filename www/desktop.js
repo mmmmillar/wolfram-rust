@@ -25,6 +25,7 @@ animation_switch.addEventListener("change", function () {
   doAnimate = animation_switch.checked;
   if (doAnimate) {
     container.style.backgroundImage = "none";
+    container.style.transform = `scale(1)`;
   } else {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     current_line_number = 0;
@@ -113,10 +114,10 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const swapBackgroundImage = async () => {
   if (!doAnimate) {
     fadeOut();
-    await delay(500);
+    await delay(450);
     changeBackgroundImage();
     fadeIn();
-    await delay(400);
+    await delay(350);
   }
   setTimeout(() => {
     requestAnimationFrame(swapBackgroundImage);
@@ -124,3 +125,21 @@ const swapBackgroundImage = async () => {
 };
 
 requestAnimationFrame(swapBackgroundImage);
+
+let scale = 1;
+let inc = 0.001;
+
+const zoom = async () => {
+  if (!doAnimate) {
+    scale += inc;
+    container.style.transform = `scale(${scale})`;
+    if (scale > 1.5 || scale < 1) {
+      inc *= -1;
+    }
+  }
+  setTimeout(() => {
+    requestAnimationFrame(zoom);
+  }, 50);
+};
+
+requestAnimationFrame(zoom);

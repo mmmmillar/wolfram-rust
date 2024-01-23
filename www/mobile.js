@@ -29,13 +29,29 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const swapBackgroundImage = async () => {
   fadeOut();
-  await delay(500);
+  await delay(450);
   changeBackgroundImage();
   fadeIn();
-  await delay(500);
+  await delay(350);
   setTimeout(() => {
     requestAnimationFrame(swapBackgroundImage);
   }, 8000);
 };
 
 requestAnimationFrame(swapBackgroundImage);
+
+let scale = 1;
+let inc = 0.001;
+
+const zoom = async () => {
+  scale += inc;
+  container.style.transform = `scale(${scale})`;
+  if (scale > 1.5 || scale < 1) {
+    inc *= -1;
+  }
+  setTimeout(() => {
+    requestAnimationFrame(zoom);
+  }, 50);
+};
+
+requestAnimationFrame(zoom);
