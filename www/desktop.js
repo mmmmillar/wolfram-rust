@@ -9,22 +9,40 @@ const LIVE_RGB = [
 ];
 const rule_set = [30, 54, 60, 62, 90, 102, 110, 126, 150, 158, 182, 188, 220];
 const background_images = [1, 2, 3, 4, 5, 6, 7];
+const w = window.innerWidth;
+const h = window.innerHeight;
+
+const canvas = document.getElementById("wolfram-canvas");
+const container = document.getElementById("container");
+const animation_switch = document.getElementById("doAnimate");
 
 background_images.forEach((i) => {
   const img = new Image();
   img.src = `assets/${i}.png`;
 });
 
+animation_switch.addEventListener("change", function () {
+  doAnimate = animation_switch.checked;
+  if (doAnimate) {
+    container.style.backgroundImage = "none";
+  } else {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    current_line_number = 0;
+    total_lines_processed = 0;
+    container.style.backgroundImage = changeBackgroundImage();
+  }
+});
+
+window.addEventListener("resize", () => {
+  container.style.backgroundSize = "cover";
+});
+
 const getRule = () => {
   return rule_set[Math.floor(Math.random() * rule_set.length)];
 };
 
-const w = window.innerWidth;
-const h = window.innerHeight;
-
 const universe = Universe.new(w, getRule());
 
-const canvas = document.getElementById("wolfram-canvas");
 const ctx = canvas.getContext("2d");
 canvas.width = w;
 canvas.height = h;
@@ -35,8 +53,15 @@ const changeColour = () => {
   ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
 };
 
+const changeBackgroundImage = () => {
+  const image_num =
+    background_images[Math.floor(Math.random() * background_images.length)];
+  container.style.backgroundImage = `url("assets/${image_num}.png")`;
+};
+
 let current_line_number = 0;
 let total_lines_processed = 0;
+let doAnimate = false;
 
 const drawCells = () => {
   if (current_line_number === h) {
@@ -62,43 +87,16 @@ const drawCells = () => {
   }
 };
 
-const container = document.getElementById("container");
-
-const changeBackgroundImage = () => {
-  const image_num =
-    background_images[Math.floor(Math.random() * background_images.length)];
-  container.style.backgroundImage = `url("assets/${image_num}.png")`;
-};
-
-const animation_switch = document.getElementById("doAnimate");
-let doAnimate = false;
-
-animation_switch.addEventListener("change", function () {
-  doAnimate = animation_switch.checked;
-  if (doAnimate) {
-    container.style.backgroundImage = "none";
-  } else {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    current_line_number = 0;
-    total_lines_processed = 0;
-    container.style.backgroundImage = changeBackgroundImage();
-  }
-});
-
-window.addEventListener("resize", () => {
-  container.style.backgroundSize = "cover";
-});
-
-const renderLoop = () => {
+const scrollBackground = () => {
   if (doAnimate) {
     universe.tick();
     drawCells();
   }
-  requestAnimationFrame(renderLoop);
+  requestAnimationFrame(scrollBackground);
 };
 
 changeColour();
-requestAnimationFrame(renderLoop);
+requestAnimationFrame(scrollBackground);
 
 const fadeIn = () => {
   container.classList.remove("fadeOut");
@@ -112,17 +110,17 @@ const fadeOut = () => {
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const renderLoop2 = async () => {
+const swapBackgroundImage = async () => {
   if (!doAnimate) {
     fadeOut();
     await delay(500);
     changeBackgroundImage();
     fadeIn();
-    await delay(500);
+    await delay(400);
   }
   setTimeout(() => {
-    requestAnimationFrame(renderLoop2);
+    requestAnimationFrame(swapBackgroundImage);
   }, 8000);
 };
 
-requestAnimationFrame(renderLoop2);
+requestAnimationFrame(swapBackgroundImage);

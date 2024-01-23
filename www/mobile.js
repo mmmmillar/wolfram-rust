@@ -27,15 +27,15 @@ const fadeOut = () => {
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const renderLoop = async () => {
+const swapBackgroundImage = async () => {
   fadeOut();
   await delay(500);
   changeBackgroundImage();
   fadeIn();
   await delay(500);
   setTimeout(() => {
-    requestAnimationFrame(renderLoop);
+    requestAnimationFrame(swapBackgroundImage);
   }, 8000);
 };
 
-requestAnimationFrame(renderLoop);
+requestAnimationFrame(swapBackgroundImage);
