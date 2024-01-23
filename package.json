@@ -1,5 +1,9 @@
 {
   "devDependencies": {
+    "serverless-plugin-scripts": "^1.0.2",
     "serverless-s3-sync": "^3.2.0"
+  },
+  "scripts": {
+    "invalidateCache": "aws configure set preview.cloudfront true && aws cloudfront create-invalidation --distribution-id $npm_package_custom_cloudFrontDistributionId --paths '/*'"
   }
 }
