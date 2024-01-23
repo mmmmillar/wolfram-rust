@@ -1,6 +1,6 @@
 import "./styles.css";
 
-const background_images = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const background_images = [1, 2, 3, 4, 5, 6, 7];
 
 const container = document.getElementById("container");
 
