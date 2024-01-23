@@ -7,9 +7,10 @@ const LIVE_RGB = [
   [0, 95, 190],
   [0, 135, 36],
 ];
+const rule_set = [30, 54, 60, 62, 90, 102, 110, 126, 150, 158, 182, 188, 220];
+const background_images = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 const getRule = () => {
-  const rule_set = [30, 54, 60, 62, 90, 102, 110, 126, 150, 158, 182, 188, 220];
   return rule_set[Math.floor(Math.random() * rule_set.length)];
 };
 
@@ -57,23 +58,66 @@ const drawCells = () => {
 };
 
 const container = document.getElementById("container");
-let scale = 1;
-let inc = 0.0003;
 
-const zoom = () => {
-  scale += inc;
-  container.style.transform = `scale(${scale})`;
-  if (scale > 1.5 || scale < 1) {
-    inc *= -1;
-  }
+const changeBackgroundImage = () => {
+  const image_num =
+    background_images[Math.floor(Math.random() * background_images.length)];
+  container.style.backgroundImage = `url("assets/${image_num}.svg")`;
 };
 
+const animation_switch = document.getElementById("doAnimate");
+let doAnimate = false;
+
+animation_switch.addEventListener("change", function () {
+  doAnimate = animation_switch.checked;
+  if (doAnimate) {
+    container.style.backgroundImage = "none";
+  } else {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    current_line_number = 0;
+    total_lines_processed = 0;
+    container.style.backgroundImage = changeBackgroundImage();
+  }
+});
+
+window.addEventListener("resize", () => {
+  document.body.style.backgroundSize = "cover";
+});
+
 const renderLoop = () => {
-  universe.tick();
-  drawCells();
-  zoom();
+  if (doAnimate) {
+    universe.tick();
+    drawCells();
+  }
   requestAnimationFrame(renderLoop);
 };
 
 changeColour();
 requestAnimationFrame(renderLoop);
+
+const fadeIn = () => {
+  container.classList.remove("fadeOut");
+  container.classList.add("fadeIn");
+};
+
+const fadeOut = () => {
+  container.classList.remove("fadeIn");
+  container.classList.add("fadeOut");
+};
+
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const renderLoop2 = async () => {
+  if (!doAnimate) {
+    fadeOut();
+    await delay(500);
+    changeBackgroundImage();
+    fadeIn();
+    await delay(500);
+  }
+  setTimeout(() => {
+    requestAnimationFrame(renderLoop2);
+  }, 8000);
+};
+
+requestAnimationFrame(renderLoop2);

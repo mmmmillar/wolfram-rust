@@ -10,11 +10,38 @@ body {
 }
 
 #container {
-  position: absolute;
+  position: relative;
   top: 0;
-  left: 0;
-  transform-origin: center center;
-  transition: transform 5s;
+  width: 100%;
+  height: 100%;
+  opacity: 100;
+  background-size: 100% 100%;
+}
+
+.fadeIn {
+  animation: fadeIn 500ms linear 1 forwards;
+}
+
+.fadeOut {
+  animation: fadeOut 500ms linear 1 backwards;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 100;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 100;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 #overlay {
@@ -138,4 +165,10 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+@media (max-width: 767px) {
+  .hidden-on-mobile {
+    display: none !important;
+  }
 }

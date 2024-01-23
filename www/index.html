@@ -3,10 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <title>Wolfram Cellular Automata!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div id="container"><canvas id="wolfram-canvas"></canvas></div>
@@ -41,14 +43,52 @@
           <a href="mailto:your.email@example.com">your.email@example.com</a>
         </p>
       </div>
+      <!-- <button id="showSvgButton">Show SVG</button>
+      <div id="svgContainer"></div> -->
     </div>
 
-    <div id="toggle-animation">
+    <div id="toggle-animation" class="hidden-on-mobile">
       <label class="switch">
         <input type="checkbox" id="doAnimate" />
         <span class="slider round"></span>
         <span class="label-text">Animate</span>
       </label>
     </div>
+
+    <!-- <script>
+      const canvas = document.getElementById("wolfram-canvas");
+
+      document
+        .getElementById("showSvgButton")
+        .addEventListener("click", function () {
+          const canvasContentAsSvg = canvasToSvg(canvas);
+          const svgContainer = document.getElementById("svgContainer");
+          svgContainer.innerText = canvasContentAsSvg;
+        });
+
+      function canvasToSvg(canvas) {
+        const svg = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "svg"
+        );
+        svg.setAttribute("width", 320);
+        svg.setAttribute("height", 240);
+
+        const image = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "image"
+        );
+        image.setAttribute("x", "0");
+        image.setAttribute("y", "0");
+        image.setAttribute("width", 320);
+        image.setAttribute("height", 240);
+        image.setAttribute("href", canvas.toDataURL());
+
+        svg.appendChild(image);
+
+        return new XMLSerializer().serializeToString(svg);
+      }
+    </script> -->
+    <script src="index.bundle.js"></script>
   </body>
 </html>

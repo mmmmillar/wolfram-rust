@@ -1,88 +1,15 @@
-import { Universe } from "wasm-wolfram";
-import { memory } from "wasm-wolfram/wolfram_rust_bg.wasm";
-import "./styles.css";
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+}
 
-const LIVE_RGB = [
-  [244, 43, 3],
-  [0, 95, 190],
-  [0, 135, 36],
-];
-const rule_set = [30, 54, 60, 62, 90, 102, 110, 126, 150, 158, 182, 188, 220];
-
-const getRule = () => {
-  return rule_set[Math.floor(Math.random() * rule_set.length)];
-};
-
-const w = window.innerWidth;
-const h = window.innerHeight;
-
-const universe = Universe.new(w, getRule());
-
-const canvas = document.getElementById("wolfram-canvas");
-const ctx = canvas.getContext("2d");
-canvas.width = w;
-canvas.height = h;
-ctx.imageSmoothingEnabled = false;
-
-const changeColour = () => {
-  const c = LIVE_RGB[Math.floor(Math.random() * LIVE_RGB.length)];
-  ctx.fillStyle = `rgb(${c[0]},${c[1]},${c[2]})`;
-};
-
-let current_line_number = 0;
-let total_lines_processed = 0;
-
-const drawCells = () => {
-  if (current_line_number === h) {
-    ctx.globalCompositeOperation = "copy";
-    ctx.drawImage(ctx.canvas, 0, -1);
-    ctx.globalCompositeOperation = "source-over";
-    current_line_number--;
+async function loadScript() {
+  if (isMobile()) {
+    await import("./mobile.js");
+  } else {
+    await import("./desktop.js");
   }
+}
 
-  const row = new Uint8Array(memory.buffer, universe.last_row_ptr(), w);
-
-  for (let x = 0; x < w; x++) {
-    if (row[x] === 1) {
-      ctx.fillRect(x, current_line_number, 1, 1);
-    }
-  }
-
-  current_line_number++;
-
-  if (++total_lines_processed % (h * 2) === 0) {
-    changeColour();
-    universe.set_rule(getRule());
-  }
-};
-
-const container = document.getElementById("container");
-let scale = 1;
-let inc = 0.0003;
-
-const zoom = () => {
-  scale += inc;
-  container.style.transform = `scale(${scale})`;
-  if (scale > 1.5 || scale < 1) {
-    inc *= -1;
-  }
-};
-
-const animationSwitch = document.getElementById("doAnimate");
-let doAnimate = false;
-
-animationSwitch.addEventListener("change", function () {
-  doAnimate = animationSwitch.checked;
-});
-
-const renderLoop = () => {
-  if (doAnimate) {
-    universe.tick();
-    drawCells();
-    zoom();
-  }
-  requestAnimationFrame(renderLoop);
-};
-
-changeColour();
-requestAnimationFrame(renderLoop);
+loadScript();
