@@ -43,8 +43,6 @@
           <a href="mailto:your.email@example.com">your.email@example.com</a>
         </p>
       </div>
-      <!-- <button id="showSvgButton">Show SVG</button>
-      <div id="svgContainer"></div> -->
     </div>
 
     <div id="toggle-animation" class="hidden-on-mobile">
@@ -54,41 +52,6 @@
         <span class="label-text">Animate</span>
       </label>
     </div>
-
-    <!-- <script>
-      const canvas = document.getElementById("wolfram-canvas");
-
-      document
-        .getElementById("showSvgButton")
-        .addEventListener("click", function () {
-          const canvasContentAsSvg = canvasToSvg(canvas);
-          const svgContainer = document.getElementById("svgContainer");
-          svgContainer.innerText = canvasContentAsSvg;
-        });
-
-      function canvasToSvg(canvas) {
-        const svg = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "svg"
-        );
-        svg.setAttribute("width", 1920);
-        svg.setAttribute("height", 1080);
-
-        const image = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "image"
-        );
-        image.setAttribute("x", "0");
-        image.setAttribute("y", "0");
-        image.setAttribute("width", 1920);
-        image.setAttribute("height", 1080);
-        image.setAttribute("href", canvas.toDataURL());
-
-        svg.appendChild(image);
-
-        return new XMLSerializer().serializeToString(svg);
-      }
-    </script> -->
     <script src="index.bundle.js"></script>
   </body>
 </html>
