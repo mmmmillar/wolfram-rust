@@ -45,3 +45,26 @@ resources:
                 - arn:aws:s3:::${self:service}
               Effect: Allow
               Principal: "*"
+    CloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Origins:
+            - DomainName: !GetAtt StaticSite.RegionalDomainName
+              Id: S3Origin
+              S3OriginConfig:
+                OriginAccessIdentity: ""
+          DefaultRootObject: index.html
+          Enabled: true
+          PriceClass: PriceClass_100
+          ViewerCertificate:
+            AcmCertificateArn: arn:aws:acm:us-east-1:654654585384:certificate/00af23ea-f993-4d8e-a5f1-53fa33ef4d88
+            SslSupportMethod: sni-only
+          DefaultCacheBehavior:
+            TargetOriginId: S3Origin
+            ForwardedValues:
+              QueryString: false
+            ViewerProtocolPolicy: redirect-to-https
+          Aliases:
+            - matthewmillar.tech
+            - www.matthewmillar.tech
