@@ -7,6 +7,7 @@ body {
   height: 100vh;
   background-color: #e89005;
   font-family: "Rubik", sans-serif;
+  color: #fff;
 }
 
 #container {
@@ -48,7 +49,6 @@ body {
   border-radius: 10px;
   text-align: center;
   width: 60%;
-  color: white;
   font-size: 110%;
 }
 
@@ -89,19 +89,18 @@ nav ul li {
 
 nav ul li a {
   text-decoration: none;
-  color: #fff;
   font-weight: 500;
+  color: #fff;
 }
 
 nav ul li a:hover {
-  /* font-size: 1.2em; */
   font-weight: 700;
 }
 
 #toggle-animation {
   position: fixed;
-  top: 8px;
-  right: 20px;
+  top: 7px;
+  right: 10px;
   display: flex;
   align-items: center;
 }
@@ -117,8 +116,7 @@ nav ul li a:hover {
 
 .switch .label-text {
   margin-right: 60px;
-  display: flex;
-  align-items: center;
+  white-space: nowrap;
 }
 
 .switch input {
@@ -146,7 +144,7 @@ nav ul li a:hover {
   width: 26px;
   left: 4px;
   bottom: 4px;
-  background-color: white;
+  background-color: #fff;
   -webkit-transition: 0.4s;
   transition: 0.4s;
 }
