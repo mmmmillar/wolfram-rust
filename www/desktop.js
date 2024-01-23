@@ -10,6 +10,11 @@ const LIVE_RGB = [
 const rule_set = [30, 54, 60, 62, 90, 102, 110, 126, 150, 158, 182, 188, 220];
 const background_images = [1, 2, 3, 4, 5, 6, 7];
 
+background_images.forEach((i) => {
+  const img = new Image();
+  img.src = `assets/${i}.svg`;
+});
+
 const getRule = () => {
   return rule_set[Math.floor(Math.random() * rule_set.length)];
 };

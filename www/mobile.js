@@ -2,6 +2,11 @@ import "./styles.css";
 
 const background_images = [1, 2, 3, 4, 5, 6, 7];
 
+background_images.forEach((i) => {
+  const img = new Image();
+  img.src = `assets/${i}.svg`;
+});
+
 const container = document.getElementById("container");
 
 const changeBackgroundImage = () => {
