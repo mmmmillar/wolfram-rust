@@ -12,7 +12,7 @@ const background_images = [1, 2, 3, 4, 5, 6, 7];
 
 background_images.forEach((i) => {
   const img = new Image();
-  img.src = `assets/${i}.svg`;
+  img.src = `assets/${i}.png`;
 });
 
 const getRule = () => {
@@ -67,7 +67,7 @@ const container = document.getElementById("container");
 const changeBackgroundImage = () => {
   const image_num =
     background_images[Math.floor(Math.random() * background_images.length)];
-  container.style.backgroundImage = `url("assets/${image_num}.svg")`;
+  container.style.backgroundImage = `url("assets/${image_num}.png")`;
 };
 
 const animation_switch = document.getElementById("doAnimate");
@@ -86,7 +86,7 @@ animation_switch.addEventListener("change", function () {
 });
 
 window.addEventListener("resize", () => {
-  document.body.style.backgroundSize = "cover";
+  container.style.backgroundSize = "cover";
 });
 
 const renderLoop = () => {
