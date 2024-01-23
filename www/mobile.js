@@ -1,6 +1,6 @@
 import "./styles.css";
 
-const background_images = [1, 2, 3, 4, 5, 6, 7];
+const background_images = [1, 2, 3, 4, 5, 6, 7, 8];
 
 background_images.forEach((i) => {
   const img = new Image();

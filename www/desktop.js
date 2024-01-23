@@ -8,7 +8,7 @@ const LIVE_RGB = [
   [0, 135, 36],
 ];
 const rule_set = [30, 54, 60, 62, 90, 102, 110, 126, 150, 158, 182, 188, 220];
-const background_images = [1, 2, 3, 4, 5, 6, 7];
+const background_images = [1, 2, 3, 4, 5, 6, 7, 8];
 const w = window.innerWidth;
 const h = window.innerHeight;
 
