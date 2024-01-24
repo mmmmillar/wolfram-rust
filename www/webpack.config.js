@@ -24,6 +24,9 @@ module.exports = (env, argv) => {
           { from: "./3d.html", to: "3d.html" },
           { from: "assets", to: "assets" },
           { from: "styles.css", to: "styles.css" },
+          { from: "robots.txt", to: "robots.txt" },
+          { from: "favicon.png", to: "favicon.png" },
+          { from: "sitemap.xml", to: "sitemap.xml" },
         ],
       }),
       new HtmlWebpackPlugin({
