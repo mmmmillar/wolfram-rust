@@ -1,5 +1,6 @@
 {
   "index": {
+    "name": "index",
     "header": {
       "title": "Matthew Millar | Software Engineer",
       "description": "Your concise and compelling summary goes here. This is an example meta description for a web page."
@@ -15,6 +16,23 @@
         },
         {
           "body": "Write me: <a href=\"mailto:mattymillar@gmail.com\">mattymillar@gmail.com</a>"
+        }
+      ]
+    }
+  },
+  "automata": {
+    "name": "automata",
+    "content": {
+      "h1": "Cellular Automata!",
+      "blocks": [
+        {
+          "body": "The background imagery on this website is generated using a model of computation known as Cellular Automata, in particular the one-dimensional automata defined by Stephen Wolfram in his <a href=\"https://en.wikipedia.org/wiki/Wolfram_code\" target=\"_blank\">Wolfram Code</a> numbering system. If you hit the Animate button in the top right of your screen (Desktop only sorry), the automata will generate on the fly using a randonly selected rule."
+        },
+        {
+          "body": "Researchers find Cellular Automata interesting due to their capacity to exhibit complex and unpredictable behavior emerging from simple rules. They also look pretty cool right! The rules I used are decribed <a href=\"https://mathworld.wolfram.com/ElementaryCellularAutomaton.html\" target=\"_blank\">here</a> pretty well if you're interested in giving it a go yourself."
+        },
+        {
+          "body": "You can see my code <a href=\"https://github.com/mmmmillar/wolfram-rust/blob/main/src/lib.rs\" target=\"_blank\">here</a>"
         }
       ]
     }

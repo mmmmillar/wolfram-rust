@@ -2,7 +2,6 @@ service: wolfram5
 
 plugins:
   - serverless-s3-sync
-  - serverless-plugin-scripts
 
 provider:
   name: aws
@@ -16,13 +15,6 @@ custom:
       deleteRemoved: true
       followSymlinks: true
       defaultContentType: text/html
-  scripts:
-    hooks:
-      after:deploy:finalize:cleanup: invalidateCache
-  cloudFrontDistributionId:
-    Fn::GetAtt:
-      - CloudFrontDistribution
-      - DomainName
 
 resources:
   Resources:

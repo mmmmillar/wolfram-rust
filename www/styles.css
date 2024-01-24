@@ -11,6 +11,11 @@ body {
   color: #fff;
 }
 
+a {
+  font-weight: 600 !important;
+  color: #fff;
+}
+
 #container {
   background-position: center;
   opacity: 100;
@@ -49,8 +54,10 @@ body {
   position: absolute;
   border-radius: 10px;
   text-align: center;
-  width: 60%;
-  font-size: 110%;
+  width: 75%;
+  font-size: 1.1em;
+  overflow-y: auto;
+  max-height: calc(100vh - 100px);
 }
 
 #overlay h1,
@@ -74,6 +81,8 @@ nav {
   text-align: center;
   background-color: rgba(0, 0, 0, 0.05);
   line-height: 30px;
+  z-index: 1000;
+  overflow: hidden;
 }
 
 nav ul {
@@ -88,14 +97,17 @@ nav ul li {
 }
 
 nav ul li a {
-  text-decoration: none;
-  font-weight: 500;
   font-size: 1.1em;
-  color: #fff;
+  text-decoration: none;
+  font-weight: 500 !important;
 }
 
 nav ul li a:hover {
-  font-weight: 700;
+  font-weight: 700 !important;
+}
+
+nav ul li a.active {
+  font-weight: 700 !important;
 }
 
 #toggle-animation {

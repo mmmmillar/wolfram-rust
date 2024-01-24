@@ -1,6 +1,7 @@
 <nav>
   <ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="#">Wolfram Automata</a></li>
+    <li><a href="/" {{#ifCond name '===' 'index' }}class="active" {{/ifCond}}>Home</a></li>
+    <li><a href="/cellular_automata.html" {{#ifCond name '===' 'automata' }}class="active" {{/ifCond}}>Cellular
+        Automata</a></li>
   </ul>
 </nav>

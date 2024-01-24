@@ -32,6 +32,12 @@ module.exports = (env, argv) => {
         inject: false,
         templateParameters: data.index,
       }),
+      new HtmlWebpackPlugin({
+        template: "./templates/automata.hbs",
+        filename: "cellular_automata.html",
+        inject: false,
+        templateParameters: data.automata,
+      }),
     ],
     module: {
       rules: [
@@ -42,6 +48,9 @@ module.exports = (env, argv) => {
         {
           test: /\.hbs$/,
           loader: "handlebars-loader",
+          options: {
+            helperDirs: path.resolve(__dirname, "helpers"),
+          },
         },
       ],
     },

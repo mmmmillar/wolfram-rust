@@ -1,0 +1,26 @@
+<html lang="en">
+{{> _header}}
+
+<body>
+    <div id="container">
+        <canvas id="wolfram-canvas"></canvas>
+    </div>
+    {{> _nav}}
+
+    <div id="overlay">
+        <div>
+            <h1>{{content.h1}}</h1>
+        </div>
+        {{#each content.blocks}}
+        <div>
+            <p>{{{body}}}</p>
+        </div>
+        {{/each}}
+    </div>
+
+    {{> _animation_toggle}}
+
+    <script src="index.bundle.js"></script>
+</body>
+
+</html>

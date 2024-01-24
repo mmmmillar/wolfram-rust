@@ -1,9 +1,9 @@
 {
   "devDependencies": {
-    "serverless-plugin-scripts": "^1.0.2",
     "serverless-s3-sync": "^3.2.0"
   },
   "scripts": {
-    "invalidateCache": "aws configure set preview.cloudfront true && aws cloudfront create-invalidation --distribution-id $npm_package_custom_cloudFrontDistributionId --paths '/*'"
+    "deploy": "cd www; npm run build; cd ..; sls deploy --force; npm run invalidate",
+    "invalidate": "npm config set script-shell \"/bin/bash\"; source .env; aws configure set preview.cloudfront true; aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths '/*'"
   }
 }
