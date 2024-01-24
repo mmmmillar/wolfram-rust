@@ -1,0 +1,22 @@
+{
+  "index": {
+    "header": {
+      "title": "Matthew Millar | Software Engineer",
+      "description": "Your concise and compelling summary goes here. This is an example meta description for a web page."
+    },
+    "content": {
+      "h1": "Hello!",
+      "blocks": [
+        {
+          "body": "I'm Matt, a passionate software engineer with a love for crafting innovative solutions. With a background in [mention your relevant expertise or technologies], I thrive on turning ideas into reality through clean and efficient code."
+        },
+        {
+          "body": "Explore my projects, read my thoughts on the latest tech trends, and don't hesitate to reach out if you have questions or collaboration opportunities."
+        },
+        {
+          "body": "Write me: <a href=\"mailto:mattymillar@gmail.com\">mattymillar@gmail.com</a>"
+        }
+      ]
+    }
+  }
+}

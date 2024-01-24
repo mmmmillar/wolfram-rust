@@ -1,5 +1,8 @@
 const path = require("path");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+const data = require("./data.json");
 
 module.exports = (env, argv) => {
   return {
@@ -18,11 +21,16 @@ module.exports = (env, argv) => {
     plugins: [
       new CopyWebpackPlugin({
         patterns: [
-          { from: "./index.html", to: "index.html" },
           { from: "./3d.html", to: "3d.html" },
           { from: "assets", to: "assets" },
           { from: "styles.css", to: "styles.css" },
         ],
+      }),
+      new HtmlWebpackPlugin({
+        template: "./templates/index.hbs",
+        filename: "index.html",
+        inject: false,
+        templateParameters: data.index,
       }),
     ],
     module: {
@@ -30,6 +38,10 @@ module.exports = (env, argv) => {
         {
           test: /\.css$/i,
           use: ["style-loader", "css-loader"],
+        },
+        {
+          test: /\.hbs$/,
+          loader: "handlebars-loader",
         },
       ],
     },
