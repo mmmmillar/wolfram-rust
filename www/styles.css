@@ -123,6 +123,7 @@ nav ul li a.active {
   right: 10px;
   display: flex;
   align-items: center;
+  z-index: 1001;
 }
 
 .switch {
