@@ -54,7 +54,7 @@ a {
   position: absolute;
   border-radius: 10px;
   text-align: center;
-  width: 75%;
+  width: 65%;
   font-size: 1.1em;
   overflow-y: auto;
   max-height: calc(100vh - 100px);
@@ -66,6 +66,13 @@ a {
   display: inline;
   line-height: 1.6em;
   padding: 2px 5px;
+}
+
+@media (max-width: 767px) {
+  #overlay {
+    text-align: left !important;
+    width: 85% !important;
+  }
 }
 
 #overlay div {

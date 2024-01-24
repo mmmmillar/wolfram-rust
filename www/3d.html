@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
+    <title>Matthew Millar | Software Engineer | 3D Cellular Automata</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Three.js Cell Rendering</title>
+    <meta
+      name="description"
+      content="A 3D rendering of Cellular Automata using Wolfram's Code numbering system. Built using Rust and Three.js."
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
       body {
         margin: 0;
@@ -12,10 +20,57 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
+        font-family: "Rubik", sans-serif;
+        color: #fff;
+      }
+
+      a {
+        font-weight: 600 !important;
+        color: #fff;
+      }
+
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        text-align: center;
+        line-height: 30px;
+      }
+
+      nav ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      nav ul li {
+        display: inline-block;
+        margin-right: 20px;
+      }
+
+      nav ul li a {
+        font-size: 1.1em;
+        text-decoration: none;
+        font-weight: 500 !important;
+      }
+
+      nav ul li a:hover {
+        font-weight: 700 !important;
+      }
+
+      nav ul li a.active {
+        font-weight: 700 !important;
       }
     </style>
   </head>
   <body>
+    <nav>
+      <ul>
+        <li><a href="/cellular_automata.html">< BACK</a></li>
+      </ul>
+    </nav>
     <script src="3d.bundle.js"></script>
   </body>
 </html>

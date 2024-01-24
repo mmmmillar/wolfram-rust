@@ -39,7 +39,9 @@ window.addEventListener("resize", () => {
 });
 
 const getRule = () => {
-  return rule_set[Math.floor(Math.random() * rule_set.length)];
+  const rule = rule_set[Math.floor(Math.random() * rule_set.length)];
+  console.log(`RULE ${rule}!`);
+  return rule;
 };
 
 const universe = Universe.new(w, getRule());

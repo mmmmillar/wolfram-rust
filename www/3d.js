@@ -17,39 +17,30 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(new THREE.Color("black"));
 document.body.appendChild(renderer.domElement);
 
-const horizonGeometry = new THREE.BoxGeometry(1000, 200, 100);
-const horizonMaterial = new THREE.MeshBasicMaterial({
-  color: new THREE.Color("red"),
-});
-const horizon = new THREE.Mesh(horizonGeometry, horizonMaterial);
-horizon.position.set(0, 4700, 400);
-horizon.name = "horizon";
-scene.add(horizon);
-
 const CELL_SIZE = 20;
 const SPACING_FACTOR = 7;
-const rule_set = [60, 90, 102, 110, 126, 150, 182, 188, 220];
+const rule_set = [60, 90, 102, 110, 126, 150];
 
 const getRule = () => {
-  return rule_set[Math.floor(Math.random() * rule_set.length)];
+  const rule = rule_set[Math.floor(Math.random() * rule_set.length)];
+  console.log(`RULE ${rule}!`);
+  return rule;
 };
 
-const w = window.innerWidth / CELL_SIZE / 1.2;
-const h = window.innerHeight / CELL_SIZE / 1.2;
+const w = window.innerWidth / CELL_SIZE;
+const h = window.innerHeight / CELL_SIZE;
 
-const universe = Universe.new(w, h, 90);
+const universe = Universe.new(w, h, getRule());
 let total_lines_processed = 0;
 
 const drawCells = () => {
   const inputRow = new Uint8Array(memory.buffer, universe.last_row_ptr(), w);
 
   scene.children.forEach((child) => {
-    if (child instanceof THREE.Mesh && child.name !== "horizon") {
-      const cellCol = Math.round(
-        (child.position.x + (w * CELL_SIZE) / 2) / CELL_SIZE
-      );
-      if (inputRow[cellCol] !== 1) scene.remove(child);
-    }
+    const cellCol = Math.round(
+      (child.position.x + (w * CELL_SIZE) / 2) / CELL_SIZE
+    );
+    if (inputRow[cellCol] !== 1) scene.remove(child);
   });
 
   for (let row = 0; row < h; row++) {
@@ -87,8 +78,6 @@ const drawCells = () => {
   if (total_lines_processed % (h * 2) === 0) {
     universe.set_rule(getRule());
   }
-
-  horizon.position.y -= 20;
 };
 
 const renderLoop = () => {
@@ -98,7 +87,7 @@ const renderLoop = () => {
 
   setTimeout(() => {
     requestAnimationFrame(renderLoop);
-  }, 80);
+  }, 50);
 };
 
 requestAnimationFrame(renderLoop);
